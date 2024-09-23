@@ -1,18 +1,16 @@
-pipline
-{
+pipeline {
+    agent any
 
-agent any
-	stages{
-		stage("bulid"){
-			steps {
-			echo "pipline is excqutin"
-			}
-			}
-
-		stage("test"){
-			steps {
-			echo "tesing erros"
-			}
-			}
-	}
+    stages {
+        stage('Hello') {
+            steps {
+                echo 'Hello World'
+                bat '''
+                    mkdir patil1.txt
+                   
+                   echo today i will go for play criket > patil/sample1.txt
+                '''
+            }
+        }
+    }
 }
