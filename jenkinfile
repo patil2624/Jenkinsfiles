@@ -4,11 +4,15 @@ pipline
 agent any
 	stages{
 		stage("bulid"){
+			steps {
 			echo "pipline is excqutin"
+			}
 			}
 
 		stage("test"){
+			steps {
 			echo "tesing erros"
+			}
 			}
 	}
 }
