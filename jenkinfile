@@ -6,9 +6,9 @@ pipeline {
             steps {
                 echo 'Hello World'
                 bat '''
-                    mkdir patil1.txt
+                    mkdir patil3.txt
                    
-                   echo today i will go for play criket > patil/sample1.txt
+                   echo today i will go for play criket > sample3i.txt
                 '''
             }
         }
