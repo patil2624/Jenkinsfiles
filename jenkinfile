@@ -1,0 +1,14 @@
+pipline
+{
+
+agent any
+	stages{
+		stage("bulid"){
+			echo "pipline is excqutin"
+			}
+
+		stage("test"){
+			echo "tesing erros"
+			}
+	}
+}
