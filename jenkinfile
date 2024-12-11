@@ -14,3 +14,35 @@ pipeline {
         }
     }
 }
+=====================================================================================
+pipeline
+{
+	agent any
+
+	stages {
+		stage("validetion")
+		{
+			steps {
+				sh '''
+					mvn validate
+					echo "validetion is complite"
+				'''
+				}
+		}
+		stage ("bulide")
+		{
+			steps {
+				sh '''
+					mvn clean package 
+					echo "package is bulide"
+				'''
+				}
+		}
+		stage ("excuting")
+		{
+			steps{
+				sh '' java -jar target/java-project2-1.1-SNAPSHOT.jar"
+			}
+	}
+	}
+}
