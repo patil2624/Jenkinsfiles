@@ -1,0 +1,202 @@
+pipeline {
+    agent any 
+    stages {
+        stage ('clean') {
+            steps {
+                sh 'rm -rf *'
+                sh 'rm -rf /var/www/html/*'
+            }
+        }
+        stage ('clone') {
+            steps {
+                 sh 'git clone https://github.com/'
+            }
+        }
+        stage ('deploy') {
+            steps {
+                sh 'cp -r /var/lib/jenkins/workspace/jenkins_git_pipeline_project_2/web_deployment_jenkins/* /var/www/html'
+            }
+        }
+    }
+}
+
+-------------------------------------------
+
+pipeline {
+    agent any 
+    
+    stages {
+        stage ('build mvn') {
+            steps {
+                git 'https://github.com/'
+                sh 'mvn clean package'
+            }
+        }
+        stage ('docker') {
+            steps {
+                script {
+                sh 'docker build -t sambit/new:v2 .'
+                }
+            }
+        }
+        stage ('docker push images') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'docker-pw', variable: 'pw')]) {
+                        sh 'docker login -u sambit1996 -p ${pw}'
+}
+                       sh 'docker push sambit1996/new:v2'
+                }
+            }
+        }
+        
+    }
+}
+
+----------------------------------------
+
+
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = 'sambit/spring'
+        CONTAINER_NAME = 'spring'
+    }
+    stages {
+       
+        stage('Clone Repository') {
+            steps {
+                sh 'rm -rf *'
+                sh 'git clone https://github.com/'
+            }
+        }
+        stage('Clean Up Existing Containers') {
+            steps {
+                script {
+                    sh """
+                    # Stop and remove existing container
+                    if [ \$(docker ps -a -q -f name=${CONTAINER_NAME}) ]; then
+                        docker stop ${CONTAINER_NAME}
+                        docker rm ${CONTAINER_NAME}
+                    fi
+                    """
+                }
+            }
+        }
+        stage('Remove Old Image') {
+            steps {
+                script {
+                    sh """
+                    # Remove existing Docker image
+                    if [ \$(docker images -q ${IMAGE_NAME}) ]; then
+                        docker rmi -f ${IMAGE_NAME}
+                    fi
+                    """
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build the Docker image
+                    sh 'docker build -t ${IMAGE_NAME} -f springboot-PJ2/Dockerfile springboot-PJ2/'
+                }
+            }
+        }
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    // Run the Docker container
+                    sh 'docker run --name ${CONTAINER_NAME} -d -p 1234:9090 ${IMAGE_NAME}'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline complete."
+        }
+    }
+}
+
+
+-----------------------------------------------------------------
+
+
+pipeline {
+    agent any
+   environment {
+     IMAGE_NAME = 'sambit:spring
+
+    stages {
+       
+        stage('Clone Repository') {
+            steps {
+                sh 'rm -rf *'
+                sh 'git clone https://github.com/'
+            }
+        }
+         stage('check') {
+            steps {
+                sh 'docker images -q ${IMAGE_NAME} | docker rmi -f ${IMAGE_NAME}
+            }
+        }
+
+       
+        stage('build') {
+            steps {
+                sh 'docker build -t  -f springboot-PJ2/Dockerfile springboot-PJ2/'
+            }
+        }
+       stage ('login') {
+            steps {
+                withCredentials([string(credentialsId: 'dockerpw', variable: 'dockerpwd')]) {
+                    sh 'docker login -u sambit -p ${dockerpwd}'
+                }
+                sh 'docker push ${IMAGE_NAME}'
+            }
+        }
+       stage('deploy in kubernetes') {
+            steps {
+               sh '''
+                  kubectl apply -f deployment.yml
+
+                  '''
+                }
+            }
+
+     
+    }
+}
+-----------------------------------------------------
+
+
+
+kubectl: Install kubectl binary with curl on Linux
+
+ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+   
+ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+
+kubectl: kubectl install
+
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+minikube: install
+
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
+
+:::::INSTALL KUBESHARK:::::::
+sh <(curl -Ls https://kubeshark.co/install)
+
+::START:::
+kubeshark tap
+
+
+
+
