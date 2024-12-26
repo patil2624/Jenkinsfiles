@@ -46,3 +46,36 @@ pipeline
 	}
 	}
 }
+======================================================================================================
+pipeline
+{
+    agent any
+    stages{
+        stage("git colen"){
+        steps{
+            git 'https://github.com/patil2624/maven_projrct_2.git'
+        }
+    }
+    stage("buliing")
+    {
+        steps{
+            bat 'mvn clean package'
+        }
+    }
+    stage(exicuteing){
+        steps{
+            
+            bat 'java -jar target/MavenProject-0.0.1-SNAPSHOT.jar'
+        }
+    }
+        
+    }
+    post{
+        always{
+            mail to: 'patiludaykumar79@gmail.com',
+            subject: "this mail from jenkins ${BUILD_ID}",
+            body: "your console output ${BUILD_URL}"
+        }
+    }
+    
+}
